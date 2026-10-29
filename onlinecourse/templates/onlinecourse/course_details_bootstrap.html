@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ course.name }}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'onlinecourse:index' %}">Home</a>
+
+            {% if user.is_authenticated %}
+                <div>
+                    <span>{{ user.first_name }} ({{ user.username }})</span>
+                    <a class="btn btn-link" href="{% url 'onlinecourse:logout' %}">Logout</a>
+                </div>
+            {% else %}
+                <form class="form-inline" action="{% url 'onlinecourse:login' %}" method="post">
+                    {% csrf_token %}
+                    <input type="text" class="form-control mr-2" placeholder="Username" name="username">
+                    <input type="password" class="form-control mr-2" placeholder="Password" name="psw">
+                    <button class="btn btn-primary" type="submit">Login</button>
+                    <a class="btn btn-link" href="{% url 'onlinecourse:registration' %}">Sign Up</a>
+                </form>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="container mt-4">
+        <h2>{{ course.name }}</h2>
+        <p>{{ course.description }}</p>
+
+        <h3 class="mt-4">Course Lessons</h3>
+
+        {% for lesson in course.lesson_set.all %}
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>Lesson {{ lesson.order|add:1 }}: {{ lesson.title }}</h5>
+                </div>
+                <div class="card-body">
+                    {{ lesson.content }}
+                </div>
+            </div>
+        {% empty %}
+            <p>No lessons are available for this course yet.</p>
+        {% endfor %}
+    </main>
+</body>
+</html>
