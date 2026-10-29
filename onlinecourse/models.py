@@ -140,3 +140,18 @@ class Submission(models.Model):
 
     def __str__(self):
         return f"Submission {self.id} - {self.enrollment.user.username}"
+
+
+    def is_get_score(self, selected_ids):
+        correct_ids = set(
+            self.choice_set.filter(is_correct=True).values_list(
+                'id', flat=True
+            )
+        )
+        selected_ids = set(selected_ids)
+
+        if correct_ids == selected_ids:
+            return self.grade
+
+        return 0
+
