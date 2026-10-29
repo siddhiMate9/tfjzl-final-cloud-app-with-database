@@ -154,4 +154,15 @@ class Submission(models.Model):
             return self.grade
 
         return 0
+    def is_get_score(self, selected_ids):
+        correct_ids = set(
+            self.choice_set.filter(is_correct=True).values_list(
+                'id', flat=True
+            )
+        )
+        selected_ids = set(selected_ids)
 
+        if correct_ids == selected_ids:
+            return self.grade
+
+        return 0
