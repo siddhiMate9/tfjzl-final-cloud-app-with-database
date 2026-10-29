@@ -1,6 +1,5 @@
 
 import sys
-import uuid
 from django.utils.timezone import now
 
 try:
@@ -29,6 +28,7 @@ class Learner(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
+
     STUDENT = 'student'
     DEVELOPER = 'developer'
     DATA_SCIENTIST = 'data_scientist'
@@ -118,6 +118,19 @@ class Question(models.Model):
     def __str__(self):
         return self.question_text
 
+    def is_get_score(self, selected_ids):
+        correct_ids = set(
+            self.choice_set.filter(is_correct=True).values_list(
+                'id', flat=True
+            )
+        )
+        selected_ids = set(selected_ids)
+
+        if correct_ids == selected_ids:
+            return self.grade
+
+        return 0
+
 
 class Choice(models.Model):
     question = models.ForeignKey(
@@ -140,29 +153,3 @@ class Submission(models.Model):
 
     def __str__(self):
         return f"Submission {self.id} - {self.enrollment.user.username}"
-
-
-    def is_get_score(self, selected_ids):
-        correct_ids = set(
-            self.choice_set.filter(is_correct=True).values_list(
-                'id', flat=True
-            )
-        )
-        selected_ids = set(selected_ids)
-
-        if correct_ids == selected_ids:
-            return self.grade
-
-        return 0
-    def is_get_score(self, selected_ids):
-        correct_ids = set(
-            self.choice_set.filter(is_correct=True).values_list(
-                'id', flat=True
-            )
-        )
-        selected_ids = set(selected_ids)
-
-        if correct_ids == selected_ids:
-            return self.grade
-
-        return 0
